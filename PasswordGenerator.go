@@ -5,87 +5,84 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
-	"unicode"
+	"strings"
 )
 
+//assigning variables
+//default attributes of passwordGenrator Request
+
+var CHARMAX int = 64
+var lettersActive bool = true
+var numbersActive bool = true
+var symbolsActive bool = true
+var length int = 16
+var amount int = 1
+
+//List of Letters,Numbers, and Symbols
+//letters = [:26]
+//nums = [26:36]
+//symbols = [36:]
+var rootSymbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~`! @#$%^&*()_-+={[}]|\\:;\"'<,>.?/"
+var letters string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+var numbers string = "1234567890"
+var symbols string = "~`! @#$%^&*()_-+={[}]|\\:;\"'<,>.?/"
+
+//Takes Args and adjusts correct rootsymbol, and length
+
 func main() {
-
-	//assigning variables
-	//default attributes of passwordGenrator Request
-	CHARMAX := 64
-
-	lettersActive := true
-	numbersActive := true
-	symbolsActive := true
-	length := 16
-	amount := 1
-
-	//List of Letters,Numbers, and Symbols
-	letters := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	letters = []rune(letters)
-	numbers := "1234567890"
-	numbers = []rune(numbers)
-	symbols := "~`! @#$%^&*()_-+={[}]|\\:;\"'<,>.?/"
-	symbols = []rune(symbols)
 
 	//Handling Arguments
 	//setting what contents is unneeded in password and storing it in a string
 	//setting how many chars are needed for password
+
+	//Password creation
+	HandlingArgs()
+	fmt.Println("Hello")
+	for i := 0; i < amount; i++ {
+		password := ""
+		rootSymbolsRune := []rune(rootSymbols)
+
+		for i := 0; i < length; i++ {
+
+			randomIndex := rand.Intn(len(rootSymbolsRune))
+			password = password + string(rootSymbolsRune[randomIndex])
+		}
+		//output
+		fmt.Println(password)
+	}
+}
+
+func HandlingArgs() {
+
 	if len(os.Args) > 1 {
 		args := os.Args[1:]
 
 		//if first arg is number this indicates size of password
-		for i, arg := range args {
-			if i == 0 && unicode.IsDigit(arg) {
-				length, err := strconv.Atoi(arg)
-			}
+		for _, arg := range args {
 
-			//Deactivate Letters
-			if arg == "-l" {
+			if newLength, err := strconv.Atoi(arg); err == nil {
+				length = newLength
+
+			} else if arg == "-l" {
 				lettersActive = false
+				rootSymbols = strings.ReplaceAll(rootSymbols, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "")
+
+			} else if arg == "-n" {
+				numbersActive = false
+				rootSymbols = strings.ReplaceAll(rootSymbols, "1234567890", "")
+
+			} else if arg == "-s" {
+				symbolsActive = false
+				rootSymbols = strings.ReplaceAll(rootSymbols, "~`! @#$%^&*()_-+={[}]|\\:;\"'<,>.?/", "")
 			}
 
 			//Deactivate Numbers
-			if arg == "-n" {
-				lettersActive = false
-			}
 
 			//Deactivate Symbols
-			if arg == "-s" {
-				lettersActive = false
-			}
+
+			//Deactivate Letters
+			//remove letters from
+
 		}
-	}
-
-	//Password creation
-	var activeArgs []string 
-
-	
-	if lettersActive{	
-		append(activeArgs, "letter")
-	}
-	if numbersActive{	
-		append(activeArgs, "number")
-	}
-	if symbolsActive{	
-		append(activeArgs, "symbol")
-	}
-	
-	for i := 0; i < amount; i++{
-		password := ""
-		for i := 0; i < length; i++{
-			temp := rand.Intn(len(activeArgs)) - 1
-
-			if temp == "letter"{
-				password := password + letters[rand.Intn(len(letters)]
-			}else if temp == "number"{
-				password := password + number[rand.Intn(len(numbers)]
-			}else if temp == "symbol"{
-				password := password + symbols[rand.Intn(len(symbols)]
-			}
-		}
-		rand.Shuffle()
-		//output
-		fmt.Println(password)
 	}
 }
