@@ -12,47 +12,35 @@ import (
 //default attributes of passwordGenrator Request
 
 var CHARMAX int = 64
-var lettersActive bool = true
-var numbersActive bool = true
-var symbolsActive bool = true
 var length int = 16
 var amount int = 1
 
 //List of Letters,Numbers, and Symbols
-//letters = [:26]
-//nums = [26:36]
-//symbols = [36:]
-var rootSymbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~`! @#$%^&*()_-+={[}]|\\:;\"'<,>.?/"
-var letters string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-var numbers string = "1234567890"
-var symbols string = "~`! @#$%^&*()_-+={[}]|\\:;\"'<,>.?/"
+var rootSymbols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~`! @#$%^&*()_-+={[}]|\\:;\"'<,>.?/"
 
 //Takes Args and adjusts correct rootsymbol, and length
 
 func main() {
 
+	var rootSymbols string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~`! @#$%^&*()_-+={[}]|\\:;\"'<,>.?/"
 	//Handling Arguments
 	//setting what contents is unneeded in password and storing it in a string
 	//setting how many chars are needed for password
 
 	//Password creation
-	HandlingArgs()
+	rootSymbols = HandlingArgs(rootSymbols)
+	rootSymbolsRune := []rune(rootSymbols)
+
 	fmt.Println("Hello")
 	for i := 0; i < amount; i++ {
-		password := ""
-		rootSymbolsRune := []rune(rootSymbols)
-
-		for i := 0; i < length; i++ {
-
-			randomIndex := rand.Intn(len(rootSymbolsRune))
-			password = password + string(rootSymbolsRune[randomIndex])
-		}
+		password := createPassword(rootSymbolsRune)
 		//output
 		fmt.Println(password)
 	}
 }
 
-func HandlingArgs() {
+func HandlingArgs(rootSymbols string) string {
+	newRootSymbols := rootSymbols
 
 	if len(os.Args) > 1 {
 		args := os.Args[1:]
@@ -63,26 +51,35 @@ func HandlingArgs() {
 			if newLength, err := strconv.Atoi(arg); err == nil {
 				length = newLength
 
-			} else if arg == "-l" {
-				lettersActive = false
-				rootSymbols = strings.ReplaceAll(rootSymbols, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "")
+			} else if arg == "-al" {
+				newRootSymbols = strings.ReplaceAll(newRootSymbols, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "")
+
+			} else if arg == "-ll" {
+				newRootSymbols = strings.ReplaceAll(newRootSymbols, "abcdefghijklmnopqrstuvwxyz", "")
+
+			} else if arg == "-cl" {
+				newRootSymbols = strings.ReplaceAll(newRootSymbols, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "")
 
 			} else if arg == "-n" {
-				numbersActive = false
-				rootSymbols = strings.ReplaceAll(rootSymbols, "1234567890", "")
+				newRootSymbols = strings.ReplaceAll(newRootSymbols, "1234567890", "")
 
 			} else if arg == "-s" {
-				symbolsActive = false
-				rootSymbols = strings.ReplaceAll(rootSymbols, "~`! @#$%^&*()_-+={[}]|\\:;\"'<,>.?/", "")
+				newRootSymbols = strings.ReplaceAll(newRootSymbols, "~`!@#$%^&*()_-+={[}]|\\:;\"'<,>.?/", "")
 			}
-
-			//Deactivate Numbers
-
-			//Deactivate Symbols
-
-			//Deactivate Letters
-			//remove letters from
-
 		}
 	}
+	return newRootSymbols
+
+}
+
+func createPassword(rootSymbolsRune []rune) string {
+	password := ""
+
+	for i := 0; i < length; i++ {
+
+		randomIndex := rand.Intn(len(rootSymbolsRune))
+		password = password + string(rootSymbolsRune[randomIndex])
+	}
+
+	return password
 }
