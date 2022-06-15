@@ -7,6 +7,8 @@ import (
 
 func main() {
 
-	 	arg := os.Args[0]
-		fmt.Println(arg)
+	fmt.Println(len(os.Args))
+	fmt.Println(os.Args[0])
+	fmt.Println(os.Args[2])
+
 }
